@@ -1,14 +1,19 @@
 class ClicksController < ApplicationController
+  before_filter :setup_click, :only => [:create]
+  
   # POST /clicks
-  # POST /clicks.json
-  def create
-     click = JSON.parse (params[:click])
-     @click = Click.new(click_type: click["click_type"], date: click["date"])
-      
-      if @click.save
-        render status: 200 
-      else
-        render text: @click.errors.to_s , status: 500
-      end
+  def create 
+    if @click.save
+      render status: 200 
+    else
+      render text: @click.errors.to_s , status: 400
+    end
+  end
+   
+   protected
+   
+   def setup_click
+     raise unless params[:click].present?
+     @click = Click.new(click_type: params[:click]["click_type"], date: params[:click]["date"])
    end
 end

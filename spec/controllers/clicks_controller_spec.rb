@@ -3,9 +3,11 @@ require 'spec_helper'
 describe ClicksController do
 
   def valid_attributes
-    { 
-      :click_type => "new",
-      :date => "2009-09-24 08:28:43"
+    {  :click => 
+         {
+           :click_type => "new",
+           :date => "2009-09-24 08:28:43"
+         }
     }.to_json
   end
   
@@ -21,15 +23,10 @@ describe ClicksController do
          }.to change(Click, :count).by(1)
       end
       
-      it "parse parameters" do
-         post :create, {:click => valid_attributes}, valid_session
-         parsed_json = JSON.parse(valid_attributes)
-         Click.last.date.should == Date.parse(parsed_json["date"])
-      end
-      
-      it "should set the click_type paramter" do
+      it "assigns a newly created click as @click" do
         post :create, {:click => valid_attributes}, valid_session
-        Click.last.click_type.should == "new"
+        assigns(:click).should be_a(Click)
+        assigns(:click).should be_persisted
       end  
     end
   end
